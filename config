@@ -1,0 +1,30 @@
+widget.CurrentLayout(
+                    font= 'Dank Mono',
+                    fontsize = 22,
+                    foreground = "1E90FF"
+                    ),
+                widget.TextBox(text="|", foreground="bf6a6a"),
+                widget.GroupBox(
+                    active = "5e81ac",
+                    inactive = "b48ead",
+                    this_current_screen_border = "bf616a",
+                    highlight_method = "block",
+                    highlight_color = ["2e3440", "2e3440"],
+                    center_aligned = True,
+                    ),
+                widget.Prompt(prompt='Run: '),
+                widget.TextBox(text="|", foreground="bf6a6a"),
+                widget.Spacer(bar.STRETCH),
+                # widget.WindowName(),
+                widget.Systray(),
+                widget.Chord(
+                    chords_colors={
+                        'launch': ("#ff0000", "#ffffff"),
+                    },
+                    name_transform=lambda name: name.upper(),
+                ),
+                # widget.Wlan(foreground="bf6a6a", format="{essid}"),
+                widget.Volume(),
+                widget.Clock(format='%A, %B %d - %H:%M', fontsize = 20, foreground="1E90FF"),
+                widget.TextBox(text=" ")
+                # widget.QuickExit(),
