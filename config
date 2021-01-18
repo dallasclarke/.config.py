@@ -31,7 +31,7 @@ import os.path
 
 from typing import List  # noqa: F401
 
-from libqtile import bar, layout, widget, hook
+from libqtile import bar, layout, widget, hook, qtile
 from libqtile.config import Click, Drag, Group, Key, Screen, Match
 from libqtile.lazy import lazy
 from libqtile.utils import guess_terminal
@@ -39,7 +39,7 @@ from libqtile.widget import Spacer, base
 
 
 mod = "mod4"
-terminal = guess_terminal()
+terminal = "kitty"
 
 keys = [
     # Switch between windows in current stack pane
@@ -88,6 +88,7 @@ keys = [
         lazy.window.toggle_fullscreen(),
         desc='toggle fullscreen'
         ),
+    Key([mod, "control"], "space", lazy.layout.rotate(), lazy.layout.flip()),
 
     # Apps
     Key([mod, "mod1"], "b", lazy.spawn("brave")),
@@ -148,8 +149,8 @@ for i in groups:
 layout_theme = {
     "border_width": 2,
     "margin": 6,
-    "border_focus": "e1acff",
-    "border_normal": "1D2330"
+    "border_focus": "ff0000",
+    "border_normal": "1E90FF"
 }
 
 layouts = [
@@ -159,8 +160,8 @@ layouts = [
     # layout.Bsp(),
      layout.Columns(),
      layout.Matrix(),
-     layout.MonadTall(border_focus="5e81ac", border_normal="b48ead", border_width=3, margin=5),
-     layout.MonadWide(border_focus="5e81ac", border_normal="b48ead", border_width=3, margin=5),
+     layout.MonadTall(border_focus="ff0000", border_normal="1E90FF", border_width=3, margin=1),
+     layout.MonadWide(border_focus="ff0000", border_normal="1E90FF", border_width=3, margin=1),
      layout.RatioTile(),
      layout.Tile(),
     # layout.TreeTab(),
@@ -211,7 +212,7 @@ screens = [
                     name_transform=lambda name: name.upper(),
                 ),
                 # widget.Wlan(foreground="bf6a6a", format="{essid}"),
-                widget.Volume(),
+                
                 widget.Clock(format='%A, %B %d - %H:%M', fontsize = 20, foreground="1E90FF"),
                 widget.TextBox(text=" ")
                 # widget.QuickExit(),
@@ -258,8 +259,8 @@ auto_fullscreen = True
 focus_on_window_activation = "smart"
 
 @hook.subscribe.startup_once
-def startup_once():
-    home = os.path.expanduser('~/config/qtile/autostart.sh')
+def autostart():
+    home = os.path.expanduser('~/.config/qtile/autostart.sh')
     subprocess.call([home])
 
 # XXX: Gasp! We're lying here. In fact, nobody really uses or cares about this
@@ -271,6 +272,5 @@ def startup_once():
 # We choose LG3D to maximize irony: it is a 3D non-reparenting WM written in
 # java that happens to be on java's whitelist.
 wmname = "LG3D"
-
 
 
