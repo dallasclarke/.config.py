@@ -98,6 +98,9 @@ keys = [
     Key([mod, "mod1"], "p", lazy.spawn("postman")),
     Key([mod, "mod1"], "n", lazy.spawn("nitrogen")),
 
+    # Volume
+    #Key([mod, "mod1"], "9", lazy.spawn("amixer -c 0 -q set Master 2dB+")),
+    #Key([mod, "mod1"], "0", lazy.spawn("amixer -c 0 -q set Master 2dB-")),
 
 
     # Switch window focus to other pane(s) of stack
@@ -155,20 +158,23 @@ layout_theme = {
 
 layouts = [
     # layout.Max(),
-    layout.Stack(num_stacks=2),
-    # Try more layouts by unleashing below layouts.
-    # layout.Bsp(),
+     layout.MonadTall(border_focus="ff0000", border_normal="1E90FF", border_width=3, margin=1),
+     layout.Stack(num_stacks=2),
      layout.Columns(),
      layout.Matrix(),
-     layout.MonadTall(border_focus="ff0000", border_normal="1E90FF", border_width=3, margin=1),
      layout.MonadWide(border_focus="ff0000", border_normal="1E90FF", border_width=3, margin=1),
      layout.RatioTile(),
      layout.Tile(),
-    # layout.TreeTab(),
-    # layout.VerticalTile(),
-    # layout.Floating(),
-    # layout.Zoomy(),
 ]
+
+colors = [["#282c34", "#282c34"], # panel background
+          ["#434758", "#434758"], # background for current screen tab
+          ["#ffffff", "#ffffff"], # font color for group names
+          ["#ff5555", "#ff5555"], # border line color for current tab
+          ["#8d62a9", "#8d62a9"], # border line color for other tab and odd widgets
+          ["#668bd7", "#668bd7"], # color for the even widgets
+          ["#e1acff", "#e1acff"]] # window name
+
 
 widget_defaults = dict(
     font='sans',
@@ -185,42 +191,152 @@ screens = [
         
         top=bar.Bar(
             [
-            	widget.TextBox(text=" "),
-                widget.CurrentLayout(
-                    font= 'Dank Mono',
-                    fontsize = 22,
-                    foreground = "1E90FF"
-                    ),
+            	widget.Sep(
+                       linewidth = 0,
+                       padding = 6,
+                       foreground = colors[2],
+                       background = colors[0]
+                       ),
+
+            	widget.Image(filename= "~/.config/qtile/icons/archlinux-512.png"),
+            	widget.TextBox(text=" "),               
                 widget.TextBox(text="|", foreground="bf6a6a"),
                 widget.GroupBox(
-                    active = "5e81ac",
-                    inactive = "b48ead",
-                    this_current_screen_border = "bf616a",
-                    highlight_method = "line",
-                    highlight_color = ["2e3440", "2e3440"],
-                    center_aligned = True,
-                    ),
+                    font = "Dank Mono",
+                       fontsize = 14,
+                       margin_y = 3,
+                       margin_x = 0,
+                       padding_y = 5,
+                       padding_x = 3,
+                       borderwidth = 3,
+                       active = colors[2],
+                       inactive = colors[2],
+                       rounded = False,
+                       highlight_color = colors[1],
+                       highlight_method = "line",
+                       this_current_screen_border = colors[3],
+                       this_screen_border = colors [4],
+                       other_current_screen_border = colors[0],
+                       other_screen_border = colors[0],
+                       foreground = colors[2],
+                       background = colors[0]
+
+                    ),                
+                widget.TextBox(text="|", foreground="bf6a6a"),                
                 widget.Prompt(prompt='Run: '),
-                widget.TextBox(text="|", foreground="bf6a6a"),
-                widget.Spacer(bar.STRETCH),
-                # widget.WindowName(),
-                widget.Systray(),
-                widget.Chord(
-                    chords_colors={
-                        'launch': ("#ff0000", "#ffffff"),
-                    },
-                    name_transform=lambda name: name.upper(),
-                ),
-                # widget.Wlan(foreground="bf6a6a", format="{essid}"),
-                
-                widget.Clock(format='%A, %B %d - %H:%M', fontsize = 20, foreground="1E90FF"),
-                widget.TextBox(text=" ")
-                # widget.QuickExit(),
+                widget.Sep(
+                       linewidth = 0,
+                       padding = 40,
+                       foreground = colors[2],
+                       background = colors[0]
+                       ),
+                widget.Systray(
+                       background = colors[0],
+                       padding = 5
+                       ),
+                widget.Spacer(bar.STRETCH),                
+               	widget.TextBox(
+                       text='',
+                       #background = colors[4],
+                       foreground = colors[5],
+                       padding = 0,
+                       fontsize = 37
+                       ),
+              	widget.TextBox(
+                       text = " 🖬",
+                       padding = 2,
+                       foreground = colors[2],
+                       background = colors[5],
+                       fontsize = 11
+                       ),
+              	widget.Memory(
+                       foreground = colors[2],
+                       background = colors[5],
+                       
+                       ),
+              	widget.TextBox(
+                       text = '',
+                       background = colors[5],
+                       foreground = colors[4],
+                       padding = 0,
+                       fontsize = 37
+                       ),
+              	widget.TextBox(
+                       text = " 🌡",
+                       padding = 2,
+                       foreground = colors[2],
+                       background = colors[4],
+                       fontsize = 11
+                       ),
+              	widget.ThermalSensor(
+                       foreground = colors[2],
+                       background = colors[4],
+                       threshold = 194,
+                       padding = 5,
+                       tag_sensor = "Core 0",
+                       metric = False
+                       ),
+
+
+              	widget.TextBox(
+                       text = '',
+                       background = colors[4],
+                       foreground = colors[5],
+                       padding = 0,
+                       fontsize = 37
+                       ),
+
+                widget.TextBox(
+                      text = " Vol:",
+                       foreground = colors[2],
+                       background = colors[5],
+                       padding = 0
+                       ),
+              	widget.Volume(
+                       foreground = colors[2],
+                       background = colors[5],
+                       padding = 5,
+                       volume_up_command = "mod + equal",
+                       volume_down_command = "mod + minus"
+                       ),
+              	widget.TextBox(
+                       text = '',
+                       background = colors[5],
+                       foreground = colors[4],
+                       padding = 0,
+                       fontsize = 37
+                       ),
+              	widget.CurrentLayout(
+                       foreground = colors[2],
+                       background = colors[4],
+                       padding = 5
+                       ),
+              	widget.TextBox(
+                       text = '',
+                       background = colors[4],
+                       foreground = colors[5],
+                       padding = 0,
+                       fontsize = 37
+                       ),
+              	widget.Clock(
+                       foreground = colors[2],
+                       background = colors[5],
+                       format = "%A, %B %d  [ %H:%M ]"
+                       ),
+              	widget.Sep(
+                       linewidth = 0,
+                       padding = 10,
+                       foreground = colors[0],
+                       background = colors[5]
+                       ),
+              	
+
+              	
             ],
             24,
         ),
     ),
-    Screen(wallpaper="~/Photos/1776267.png"),
+    # Screen(widget.Wallpaper(directory = "~/Photos/mountain.jpg")),
 ]
 
 # Drag floating layouts.
@@ -262,6 +378,7 @@ focus_on_window_activation = "smart"
 def autostart():
     home = os.path.expanduser('~/.config/qtile/autostart.sh')
     subprocess.call([home])
+
 
 # XXX: Gasp! We're lying here. In fact, nobody really uses or cares about this
 # string besides java UI toolkits; you can see several discussions on the
