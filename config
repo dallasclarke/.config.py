@@ -97,10 +97,13 @@ keys = [
     Key([mod, "mod1"], "s", lazy.spawn("slack")),
     Key([mod, "mod1"], "p", lazy.spawn("postman")),
     Key([mod, "mod1"], "n", lazy.spawn("nitrogen")),
+    Key([mod, "mod1"], "r", lazy.spawn("robo3t")),
+    Key([mod, "mod1"], "l", lazy.spawn("librewolf")),
 
     # Volume
-    #Key([mod, "mod1"], "9", lazy.spawn("amixer -c 0 -q set Master 2dB+")),
-    #Key([mod, "mod1"], "0", lazy.spawn("amixer -c 0 -q set Master 2dB-")),
+    Key([mod], 'F12', lazy.spawn("pactl set-sink-volume @DEFAULT_SINK@ +5%")),
+    Key([mod], 'F11', lazy.spawn("pactl set-sink-volume @DEFAULT_SINK@ -5%")),
+    Key([mod], 'F10', lazy.spawn("pactl set-sink-mute @DEFAULT_SINK@ toggle")),
 
 
     # Switch window focus to other pane(s) of stack
@@ -150,8 +153,8 @@ for i in groups:
     ])
 
 layout_theme = {
-    "border_width": 2,
-    "margin": 6,
+    "border_width": 3,
+    "margin": 3,
     "border_focus": "ff0000",
     "border_normal": "1E90FF"
 }
@@ -160,11 +163,12 @@ layouts = [
     # layout.Max(),
      layout.MonadTall(border_focus="ff0000", border_normal="1E90FF", border_width=3, margin=1),
      layout.Stack(num_stacks=2),
-     layout.Columns(),
-     layout.Matrix(),
-     layout.MonadWide(border_focus="ff0000", border_normal="1E90FF", border_width=3, margin=1),
-     layout.RatioTile(),
-     layout.Tile(),
+     #layout.Columns(),
+     layout.Matrix(**layout_theme),
+     layout.Floating(**layout_theme),
+     #layout.MonadWide(border_focus="ff0000", border_normal="1E90FF", border_width=3, margin=1),
+     #layout.RatioTile(),
+     #layout.Tile(),
 ]
 
 colors = [["#282c34", "#282c34"], # panel background
@@ -296,8 +300,7 @@ screens = [
                        foreground = colors[2],
                        background = colors[5],
                        padding = 5,
-                       volume_up_command = "mod + equal",
-                       volume_down_command = "mod + minus"
+                       update_interval=2
                        ),
               	widget.TextBox(
                        text = '',
@@ -376,7 +379,7 @@ focus_on_window_activation = "smart"
 
 @hook.subscribe.startup_once
 def autostart():
-    home = os.path.expanduser('~/.config/qtile/autostart.sh')
+    home = os.path.expanduser('.config/qtile/autostart.sh')
     subprocess.call([home])
 
 
