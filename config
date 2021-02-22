@@ -1,28 +1,4 @@
-# Copyright (c) 2010 Aldo Cortesi
-# Copyright (c) 2010, 2014 dequis
-# Copyright (c) 2012 Randall Ma
-# Copyright (c) 2012-2014 Tycho Andersen
-# Copyright (c) 2012 Craig Barnes
-# Copyright (c) 2013 horsik
-# Copyright (c) 2013 Tao Sauvage
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
+
 import os
 import re
 import socket
@@ -39,7 +15,7 @@ from libqtile.widget import Spacer, base
 
 
 mod = "mod4"
-terminal = "kitty"
+terminal = "alacritty"
 
 keys = [
     # Switch between windows in current stack pane
@@ -93,7 +69,7 @@ keys = [
     # Apps
     Key([mod, "mod1"], "b", lazy.spawn("brave")),
     Key([mod, "mod1"], "z", lazy.spawn("zoom")),
-    Key([mod, "mod1"], "d", lazy.spawn("dolphin")),
+    Key([mod, "mod1"], "f", lazy.spawn("pcmanfm")),
     Key([mod, "mod1"], "s", lazy.spawn("slack")),
     Key([mod, "mod1"], "p", lazy.spawn("postman")),
     Key([mod, "mod1"], "n", lazy.spawn("nitrogen")),
@@ -101,8 +77,8 @@ keys = [
     Key([mod, "mod1"], "l", lazy.spawn("librewolf")),
 
     # Volume
-    Key([mod], 'F12', lazy.spawn("pactl set-sink-volume @DEFAULT_SINK@ +5%")),
-    Key([mod], 'F11', lazy.spawn("pactl set-sink-volume @DEFAULT_SINK@ -5%")),
+    Key([mod], 'F12', lazy.spawn("pactl set-sink-volume @DEFAULT_SINK@ +2%")),
+    Key([mod], 'F11', lazy.spawn("pactl set-sink-volume @DEFAULT_SINK@ -2%")),
     Key([mod], 'F10', lazy.spawn("pactl set-sink-mute @DEFAULT_SINK@ toggle")),
 
 
@@ -161,7 +137,7 @@ layout_theme = {
 
 layouts = [
     # layout.Max(),
-     layout.MonadTall(border_focus="ff0000", border_normal="1E90FF", border_width=3, margin=1),
+     layout.MonadTall(border_focus="ff0000", border_normal="1E90FF", border_width=3, margin=3),
      layout.Stack(num_stacks=2),
      #layout.Columns(),
      layout.Matrix(**layout_theme),
@@ -198,16 +174,16 @@ screens = [
             	widget.Sep(
                        linewidth = 0,
                        padding = 6,
-                       foreground = colors[2],
-                       background = colors[0]
+                       foreground = "#000000",
+                       background = "#000000"
                        ),
 
             	widget.Image(filename= "~/.config/qtile/icons/archlinux-512.png"),
             	widget.TextBox(text=" "),               
-                widget.TextBox(text="|", foreground="bf6a6a"),
+                widget.TextBox(text="|", foreground="#bf6a6a"),
                 widget.GroupBox(
-                    font = "Dank Mono",
-                       fontsize = 14,
+                    font = "Fira Code",
+                       fontsize = 15,
                        margin_y = 3,
                        margin_x = 0,
                        padding_y = 5,
@@ -222,8 +198,8 @@ screens = [
                        this_screen_border = colors [4],
                        other_current_screen_border = colors[0],
                        other_screen_border = colors[0],
-                       foreground = colors[2],
-                       background = colors[0]
+                       foreground = "#000000",
+                       background = "#000000"
 
                     ),                
                 widget.TextBox(text="|", foreground="bf6a6a"),                
@@ -238,108 +214,58 @@ screens = [
                        background = colors[0],
                        padding = 5
                        ),
-                widget.Spacer(bar.STRETCH),                
-               	widget.TextBox(
-                       text='',
-                       #background = colors[4],
-                       foreground = colors[5],
-                       padding = 0,
-                       fontsize = 37
-                       ),
+                widget.Spacer(bar.STRETCH),                              	
               	widget.TextBox(
                        text = " 🖬",
                        padding = 2,
-                       foreground = colors[2],
-                       background = colors[5],
-                       fontsize = 11
+                       foreground="#00bfff",
+                       fontsize = 15
                        ),
               	widget.Memory(
-                       foreground = colors[2],
-                       background = colors[5],
-                       
-                       ),
-              	widget.TextBox(
-                       text = '',
-                       background = colors[5],
-                       foreground = colors[4],
-                       padding = 0,
-                       fontsize = 37
-                       ),
+                       foreground="#00bfff"                       
+                       ),              	
               	widget.TextBox(
                        text = " 🌡",
+                       foreground="#39ff14",
                        padding = 2,
-                       foreground = colors[2],
-                       background = colors[4],
-                       fontsize = 11
+                       fontsize = 15
                        ),
               	widget.ThermalSensor(
-                       foreground = colors[2],
-                       background = colors[4],
                        threshold = 194,
                        padding = 5,
                        tag_sensor = "Core 0",
-                       metric = False
+                       metric = False,
+                       foreground="#39ff14"
                        ),
-
-
-              	widget.TextBox(
-                       text = '',
-                       background = colors[4],
-                       foreground = colors[5],
-                       padding = 0,
-                       fontsize = 37
-                       ),
-
                 widget.TextBox(
                       text = " Vol:",
-                       foreground = colors[2],
-                       background = colors[5],
-                       padding = 0
+                      padding = 0,
+                      foreground="#00ffff"
                        ),
               	widget.Volume(
-                       foreground = colors[2],
-                       background = colors[5],
+                       foreground="#00ffff",
                        padding = 5,
                        update_interval=2
                        ),
-              	widget.TextBox(
-                       text = '',
-                       background = colors[5],
-                       foreground = colors[4],
-                       padding = 0,
-                       fontsize = 37
-                       ),
-              	widget.CurrentLayout(
-                       foreground = colors[2],
-                       background = colors[4],
+                widget.CurrentLayout(
+              		   foreground="#e8000d",
                        padding = 5
-                       ),
-              	widget.TextBox(
-                       text = '',
-                       background = colors[4],
-                       foreground = colors[5],
-                       padding = 0,
-                       fontsize = 37
-                       ),
+                       ),            	
               	widget.Clock(
-                       foreground = colors[2],
-                       background = colors[5],
+                       foreground="#fff700",
                        format = "%A, %B %d  [ %H:%M ]"
                        ),
               	widget.Sep(
                        linewidth = 0,
                        padding = 10,
-                       foreground = colors[0],
-                       background = colors[5]
+                       foreground = "#000000",
+                       background = "#000000"
                        ),
-              	
-
-              	
             ],
             24,
         ),
     ),
-    # Screen(widget.Wallpaper(directory = "~/Photos/mountain.jpg")),
+     # Screen(widget.Wallpaper(directory = "~/Photos/mountain.jpg")),
 ]
 
 # Drag floating layouts.
@@ -379,8 +305,9 @@ focus_on_window_activation = "smart"
 
 @hook.subscribe.startup_once
 def autostart():
-    home = os.path.expanduser('.config/qtile/autostart.sh')
+    home = os.path.expanduser('~/.config/qtile/autostart.sh')
     subprocess.call([home])
+ 
 
 
 # XXX: Gasp! We're lying here. In fact, nobody really uses or cares about this
