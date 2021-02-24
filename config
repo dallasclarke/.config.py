@@ -1,21 +1,48 @@
+# Copyright (c) 2010 Aldo Cortesi
+# Copyright (c) 2010, 2014 dequis
+# Copyright (c) 2012 Randall Ma
+# Copyright (c) 2012-2014 Tycho Andersen
+# Copyright (c) 2012 Craig Barnes
+# Copyright (c) 2013 horsik
+# Copyright (c) 2013 Tao Sauvage
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 
 import os
 import re
 import socket
 import subprocess
-import os.path
 
-from typing import List  # noqa: F401
-
-from libqtile import bar, layout, widget, hook, qtile
-from libqtile.config import Click, Drag, Group, Key, Screen, Match
+from libqtile import bar, layout, widget, hook
+from libqtile.config import Click, Drag, Group, Key, Match, Screen, KeyChord
 from libqtile.lazy import lazy
 from libqtile.utils import guess_terminal
-from libqtile.widget import Spacer, base
+from typing import List
 
+@hook.subscribe.startup_once
+def autostart():
+        home = os.path.expanduser('~/.config/qtile/autostart.sh')
+        subprocess.call([home])
 
 mod = "mod4"
 terminal = "alacritty"
+myConfig = "~/.config/qtile/config.py"
 
 keys = [
     # Switch between windows in current stack pane
@@ -26,60 +53,44 @@ keys = [
 
     # Move windows up or down in current stack
     Key([mod, "control"], "k", lazy.layout.shuffle_down(),
-        desc="Move window down in current stack "),
+        desc="Move window down in current stack"),
     Key([mod, "control"], "j", lazy.layout.shuffle_up(),
-        desc="Move window up in current stack "),
+        desc="Move window up in current stack"),
 
     Key([mod, "shift"], "k",
         lazy.layout.shuffle_down(),
-        desc='Move windows down in current stack'
+        desc="Move windows down in current stack"
         ),
-    Key([mod, "shift"], "j",
+    Key([mod, "shift"], "j", 
         lazy.layout.shuffle_up(),
-        desc='Move windows up in current stack'
+        desc="Move windows up in current stack"
         ),
     Key([mod], "h",
         lazy.layout.grow(),
         lazy.layout.increase_nmaster(),
-        desc='Expand window (MonadTall), increase number in master pane (Tile)'
+        desc="Expand window (MonadTall), increase number in master pane"
         ),
     Key([mod], "l",
         lazy.layout.shrink(),
         lazy.layout.decrease_nmaster(),
-        desc='Shrink window (MonadTall), decrease number in master pane (Tile)'
+        desc="Shrink window (MonadTall), decrease number in master pane"
         ),
     Key([mod], "n",
         lazy.layout.normalize(),
-        desc='normalize window size ratios'
-        ),
-    Key([mod], "m",
-        lazy.layout.maximize(),
-        desc='toggle window between minimum and maximum sizes'
+        desc="Normalize windows"
         ),
     Key([mod, "shift"], "v",
         lazy.window.toggle_floating(),
         desc='toggle floating'
-        ),
-    Key([mod, "shift"], "m",
-        lazy.window.toggle_fullscreen(),
-        desc='toggle fullscreen'
         ),
     Key([mod, "control"], "space", lazy.layout.rotate(), lazy.layout.flip()),
 
     # Apps
     Key([mod, "mod1"], "b", lazy.spawn("brave")),
     Key([mod, "mod1"], "z", lazy.spawn("zoom")),
-    Key([mod, "mod1"], "f", lazy.spawn("pcmanfm")),
     Key([mod, "mod1"], "s", lazy.spawn("slack")),
-    Key([mod, "mod1"], "p", lazy.spawn("postman")),
-    Key([mod, "mod1"], "n", lazy.spawn("nitrogen")),
-    Key([mod, "mod1"], "r", lazy.spawn("robo3t")),
-    Key([mod, "mod1"], "l", lazy.spawn("librewolf")),
+    Key([mod, "mod1"], "v", lazy.spawn("code")),
 
-    # Volume
-    Key([mod], 'F12', lazy.spawn("pactl set-sink-volume @DEFAULT_SINK@ +2%")),
-    Key([mod], 'F11', lazy.spawn("pactl set-sink-volume @DEFAULT_SINK@ -2%")),
-    Key([mod], 'F10', lazy.spawn("pactl set-sink-mute @DEFAULT_SINK@ toggle")),
 
 
     # Switch window focus to other pane(s) of stack
@@ -89,6 +100,7 @@ keys = [
     # Swap panes of split stack
     Key([mod, "shift"], "space", lazy.layout.rotate(),
         desc="Swap panes of split stack"),
+
 
     # Toggle between split and unsplit sides of stack.
     # Split = all windows displayed
@@ -102,14 +114,16 @@ keys = [
     Key([mod], "Tab", lazy.next_layout(), desc="Toggle between layouts"),
     Key([mod], "w", lazy.window.kill(), desc="Kill focused window"),
 
-    Key([mod, "control"], "r", lazy.restart(), desc="Restart qtile"),
-    Key([mod, "control"], "q", lazy.shutdown(), desc="Shutdown qtile"),
+    Key([mod, "control"], "r", lazy.restart(), desc="Restart Qtile"),
+    Key([mod, "control"], "q", lazy.shutdown(), desc="Shutdown Qtile"),
     Key([mod], "r", lazy.spawncmd(),
         desc="Spawn a command using a prompt widget"),
 
-    
+    # Volume
+    Key([mod], 'F12', lazy.spawn("pactl set-sink-volume @DEFAULT_SINK@ +2%")),
+    Key([mod], 'F11', lazy.spawn("pactl set-sink-volume @DEFAULT_SINK@ -2%")),
+    Key([mod], 'F10', lazy.spawn("pactl set-sink-mute @DEFAULT_SINK@ toggle")),
 ]
-
 
 groups = [Group(i) for i in "asdfuiop"]
 
@@ -129,143 +143,106 @@ for i in groups:
     ])
 
 layout_theme = {
-    "border_width": 3,
-    "margin": 3,
-    "border_focus": "ff0000",
-    "border_normal": "1E90FF"
+	"border_width": 4,
+	"margin": 6,
+	"border_focus": "ff0000",
+	"border_normal": "1E90FF"
 }
 
 layouts = [
+    # layout.Columns(border_focus_stack='#d75f5f'),
+      layout.MonadTall(**layout_theme),
     # layout.Max(),
-     layout.MonadTall(border_focus="ff0000", border_normal="1E90FF", border_width=3, margin=3),
-     layout.Stack(num_stacks=2),
-     #layout.Columns(),
-     layout.Matrix(**layout_theme),
-     layout.Floating(**layout_theme),
-     #layout.MonadWide(border_focus="ff0000", border_normal="1E90FF", border_width=3, margin=1),
-     #layout.RatioTile(),
-     #layout.Tile(),
+    # layout.Stack(num_stacks=2),
+    # layout.Bsp(),
+      layout.Matrix(**layout_theme),
+      layout.MonadWide(**layout_theme),
+      layout.Floating(**layout_theme),
+    # layout.RatioTile(),
+    # layout.Tile(),
+    # layout.TreeTab(),
+    # layout.VerticalTile(),
+    # layout.Zoomy(),
+      
 ]
 
-colors = [["#282c34", "#282c34"], # panel background
-          ["#434758", "#434758"], # background for current screen tab
-          ["#ffffff", "#ffffff"], # font color for group names
-          ["#ff5555", "#ff5555"], # border line color for current tab
-          ["#8d62a9", "#8d62a9"], # border line color for other tab and odd widgets
-          ["#668bd7", "#668bd7"], # color for the even widgets
-          ["#e1acff", "#e1acff"]] # window name
-
-
 widget_defaults = dict(
-    font='sans',
-    fontsize=14,
-    padding=4,
-    background="2e3440",
-    foreground="5e81ac"
+    font='Fira Code',
+    fontsize=15,
+    padding=5,
 )
 extension_defaults = widget_defaults.copy()
 
 screens = [
-
     Screen(
-        
         top=bar.Bar(
             [
-            	widget.Sep(
-                       linewidth = 0,
-                       padding = 6,
-                       foreground = "#000000",
-                       background = "#000000"
-                       ),
-
-            	widget.Image(filename= "~/.config/qtile/icons/archlinux-512.png"),
-            	widget.TextBox(text=" "),               
-                widget.TextBox(text="|", foreground="#bf6a6a"),
+            	widget.TextBox(text=" "),
+            	widget.TextBox(text="|", foreground="#bf6a6a"),
                 widget.GroupBox(
-                    font = "Fira Code",
-                       fontsize = 15,
-                       margin_y = 3,
-                       margin_x = 0,
-                       padding_y = 5,
-                       padding_x = 3,
-                       borderwidth = 3,
-                       active = colors[2],
-                       inactive = colors[2],
-                       rounded = False,
-                       highlight_color = colors[1],
-                       highlight_method = "line",
-                       this_current_screen_border = colors[3],
-                       this_screen_border = colors [4],
-                       other_current_screen_border = colors[0],
-                       other_screen_border = colors[0],
-                       foreground = "#000000",
-                       background = "#000000"
-
-                    ),                
-                widget.TextBox(text="|", foreground="bf6a6a"),                
-                widget.Prompt(prompt='Run: '),
-                widget.Sep(
-                       linewidth = 0,
-                       padding = 40,
-                       foreground = colors[2],
-                       background = colors[0]
-                       ),
-                widget.Systray(
-                       background = colors[0],
-                       padding = 5
-                       ),
-                widget.Spacer(bar.STRETCH),                              	
-              	widget.TextBox(
-                       text = " 🖬",
-                       padding = 2,
-                       foreground="#00bfff",
-                       fontsize = 15
-                       ),
-              	widget.Memory(
-                       foreground="#00bfff"                       
-                       ),              	
-              	widget.TextBox(
-                       text = " 🌡",
-                       foreground="#39ff14",
-                       padding = 2,
-                       fontsize = 15
-                       ),
-              	widget.ThermalSensor(
-                       threshold = 194,
-                       padding = 5,
-                       tag_sensor = "Core 0",
-                       metric = False,
-                       foreground="#39ff14"
-                       ),
+                	font = "Fira Code",
+                	fontsize = 15,
+                	margin_y = 3,
+                	margin_x = 0,
+                	padding_y = 5,
+                	padding_x = 3,
+                	border_width = 3,
+                	active = "#ffffff",
+                	inactive = "#ffffff",
+                	rounded = False,
+                	highlight_color = "#434758",
+                	highlight_method = "line",
+                	this_current_screen_border = "#ff5555",
+                	this_screen_border = "#8d62a9",
+                	other_current_screen_border = "#8d62a9",
+                	other_screen_border = "#8d62a9",            
+                	),
+                widget.TextBox(text="|", foreground="bf6a6a"),
+                widget.Prompt(),
+                # widget.WindowName(),
+                widget.Spacer(bar.STRETCH),
+                widget.Chord(
+                    chords_colors={
+                        'launch': ("#ff0000", "#ffffff"),
+                    },
+                    name_transform=lambda name: name.upper(),
+                ),
+                widget.Systray(padding=10),           
+                widget.Sep(padding=10),
                 widget.TextBox(
-                      text = " Vol:",
-                      padding = 0,
-                      foreground="#00ffff"
-                       ),
-              	widget.Volume(
-                       foreground="#00ffff",
-                       padding = 5,
-                       update_interval=2
-                       ),
+                	text = "CoreTemp:",
+                	foreground = "#39ff14",
+                	padding = 1
+                	),
+                widget.ThermalSensor(
+                    threshold = 194,
+                    padding = 5,
+                    tag_sensor = "Core 0",
+                    metric = False,
+                    foreground = "#39ff14",
+                    ),
+                widget.TextBox(
+                    text = "Vol:",
+                    padding = 1,
+                    foreground = "#00ffff",
+                    ),
+                widget.Volume(
+                    foreground = "#00ffff",
+                    padding = 5,
+                    update_interval= 2,
+                    ),
                 widget.CurrentLayout(
-              		   foreground="#e8000d",
-                       padding = 5
-                       ),            	
-              	widget.Clock(
-                       foreground="#fff700",
-                       format = "%A, %B %d  [ %H:%M ]"
-                       ),
-              	widget.Sep(
-                       linewidth = 0,
-                       padding = 10,
-                       foreground = "#000000",
-                       background = "#000000"
-                       ),
+                    foreground = "#e8000d",
+                    padding = 5,
+                    ),
+                widget.Clock(
+                    foreground="#fff700", 
+                    format='%A, %B %d [%H:%M]'
+                    ),
             ],
             24,
         ),
     ),
-     # Screen(widget.Wallpaper(directory = "~/Photos/mountain.jpg")),
 ]
 
 # Drag floating layouts.
@@ -285,29 +262,16 @@ bring_front_click = False
 cursor_warp = False
 floating_layout = layout.Floating(float_rules=[
     # Run the utility of `xprop` to see the wm class and name of an X client.
-    {'wmclass': 'confirm'},
-    {'wmclass': 'dialog'},
-    {'wmclass': 'download'},
-    {'wmclass': 'error'},
-    {'wmclass': 'file_progress'},
-    {'wmclass': 'notification'},
-    {'wmclass': 'splash'},
-    {'wmclass': 'toolbar'},
-    {'wmclass': 'confirmreset'},  # gitk
-    {'wmclass': 'makebranch'},  # gitk
-    {'wmclass': 'maketag'},  # gitk
-    {'wname': 'branchdialog'},  # gitk
-    {'wname': 'pinentry'},  # GPG key password entry
-    {'wmclass': 'ssh-askpass'},  # ssh-askpass
+    *layout.Floating.default_float_rules,
+    Match(wm_class='confirmreset'),  # gitk
+    Match(wm_class='makebranch'),  # gitk
+    Match(wm_class='maketag'),  # gitk
+    Match(wm_class='ssh-askpass'),  # ssh-askpass
+    Match(title='branchdialog'),  # gitk
+    Match(title='pinentry'),  # GPG key password entry
 ])
 auto_fullscreen = True
 focus_on_window_activation = "smart"
-
-@hook.subscribe.startup_once
-def autostart():
-    home = os.path.expanduser('~/.config/qtile/autostart.sh')
-    subprocess.call([home])
- 
 
 
 # XXX: Gasp! We're lying here. In fact, nobody really uses or cares about this
@@ -319,5 +283,3 @@ def autostart():
 # We choose LG3D to maximize irony: it is a 3D non-reparenting WM written in
 # java that happens to be on java's whitelist.
 wmname = "LG3D"
-
-
