@@ -90,6 +90,9 @@ keys = [
     Key([mod, "mod1"], "z", lazy.spawn("zoom")),
     Key([mod, "mod1"], "s", lazy.spawn("slack")),
     Key([mod, "mod1"], "v", lazy.spawn("code")),
+    Key([mod, "mod1"], "n", lazy.spawn("nitrogen")),
+    Key([mod, "mod1"], "f", lazy.spawn("nemo")),
+    Key([mod, "mod1"], "l", lazy.spawn("librewolf")),
 
 
 
@@ -209,6 +212,14 @@ screens = [
                 ),
                 widget.Systray(padding=10),           
                 widget.Sep(padding=10),
+                widget.TextBox(
+                	text = "Memory:",
+                	foreground = "#ee82ee",
+                	padding = 1
+                	),
+                widget.Memory(
+                	foreground = "#ee82ee",              
+                	),
                 widget.TextBox(
                 	text = "CoreTemp:",
                 	foreground = "#39ff14",
